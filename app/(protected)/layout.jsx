@@ -1,26 +1,25 @@
+// app/(protected)/layout.jsx
 'use client';
 
-import { useAuth } from "../lib/AuthContext"; // Poprawiona ścieżka do AuthContext
 import { useLayoutEffect } from "react";
 import { redirect } from 'next/navigation';
 import { usePathname } from 'next/navigation';
+import { useAuth } from "../lib/AuthContext"; // Importuj useAuth z poprawnej ścieżki
 
+// Komponent chroniony, który sprawdza, czy użytkownik jest zalogowany
 function Protected({ children }) {
-  const { user } = useAuth(); // Sprawdzenie, czy użytkownik jest zalogowany
-  const returnUrl = usePathname(); // Ścieżka, na którą użytkownik powinien wrócić po zalogowaniu
+  const { user, loading } = useAuth(); // Używamy hooka useAuth, żeby dostać użytkownika i stan ładowania
+
+  const returnUrl = usePathname(); // Pobieramy bieżącą ścieżkę, aby móc ją przekazać po przekierowaniu
 
   useLayoutEffect(() => {
+    if (loading) return;  // Czekamy, aż stan ładowania się zakończy
     if (!user) {
-      // Jeśli użytkownik nie jest zalogowany, przekieruj do strony logowania
-      redirect(`/user/signin?returnUrl=${returnUrl}`);
+      redirect(`/user/signin?returnUrl=${returnUrl}`); // Jeśli nie ma użytkownika, przekierowujemy na stronę logowania
     }
-  }, [user, returnUrl]);
+  }, [user, loading, returnUrl]); // Działamy na zmianie stanu usera lub loading
 
-  return (
-    <>
-      {children} {/* Renderowanie dzieci (strony) tylko, jeśli użytkownik jest zalogowany */}
-    </>
-  );
+  return <>{children}</>; // Zwracamy dzieci (czyli całą resztę aplikacji)
 }
 
 export default Protected;
