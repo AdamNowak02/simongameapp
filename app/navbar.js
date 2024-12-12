@@ -18,7 +18,7 @@ const Navbar = () => {
         <a href="/user/profile" className="flex items-center space-x-2 hover:bg-gray-300 p-2 rounded">
           <FaUser /> <span>Profil</span>
         </a>
-        <a href="/game" className="flex items-center space-x-2 hover:bg-gray-300 p-2 rounded">
+        <a href="/user/game" className="flex items-center space-x-2 hover:bg-gray-300 p-2 rounded">
           <FaGamepad /> <span>Gra</span>
         </a>
       </>
