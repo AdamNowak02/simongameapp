@@ -20,15 +20,18 @@ export default function RegisterPage() {
 
     const auth = getAuth();
     try {
+      // Rejestracja użytkownika
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('User registered:', userCredential.user);
 
+      // Wysyłanie e-maila weryfikacyjnego
       await sendEmailVerification(auth.currentUser);
       console.log('Email verification sent');
 
-      // Wyloguj użytkownika po rejestracji
+      // Wylogowanie użytkownika po rejestracji
       await signOut(auth);
-      router.push('/user/verfiy'); // Przekierowanie na stronę weryfikacji
+      // Przekierowanie na stronę weryfikacji
+      router.push('/user/verify');
     } catch (error) {
       console.error('Błąd rejestracji:', error.message);
       setRegisterError(error.message);
