@@ -1,7 +1,7 @@
 'use client'; // Używamy 'use client', aby upewnić się, że komponent działa tylko po stronie klienta
 
 import { useAuth } from './lib/AuthContext'; // Hook z AuthContext
-import { FaHome, FaSignInAlt, FaUserPlus, FaUser, FaGamepad } from 'react-icons/fa'; // Ikony dla przycisków
+import { FaHome, FaSignInAlt, FaUserPlus, FaUser, FaGamepad, FaListAlt } from 'react-icons/fa'; // Ikony dla przycisków
 
 const Navbar = () => {
   const { user, loading } = useAuth(); // Uzyskujemy dostęp do stanu użytkownika i stanu ładowania
@@ -21,6 +21,9 @@ const Navbar = () => {
         <a href="/user/game" className="flex items-center space-x-2 hover:bg-gray-300 p-2 rounded">
           <FaGamepad /> <span>Gra</span>
         </a>
+        <a href="/user/leaderboard" className="flex items-center space-x-2 hover:bg-gray-300 p-2 rounded">
+          <FaListAlt /> <span>Tabela wyników</span>
+  </a>
       </>
     );
   }
