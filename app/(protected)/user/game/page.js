@@ -15,13 +15,13 @@ export default function SimonGame() {
   const [gameOver, setGameOver] = useState(false); // Game over flag
   const [message, setMessage] = useState(""); // Message to show game over
 
-  const colors = ['green', 'red', 'yellow', 'blue']; // Subtle colors
+  const colors = ['green', 'red', 'yellow', 'blue']; // Colors available in the game
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        // Fetch the user's best score
+        // Fetch the user's best score from Firebase
         const userDoc = await getDoc(doc(db, 'scores', currentUser.uid));
         if (userDoc.exists()) {
           setBestScore(userDoc.data().BestGamePoints || 0);
@@ -32,31 +32,36 @@ export default function SimonGame() {
     return () => unsubscribe();
   }, []);
 
+
+
+  // Start the game logic
   const startGame = () => {
-    setSequence([]);
-    setPlayerInput([]);
-    setScore(0);
-    setGameOver(false);
-    setMessage(""); // Reset game over message
-    setIsPlaying(true);
-    addNewStep(); // Start the game with the first color
+  
+    setTimeout(() => {
+      setIsPlaying(true); // Start the game after a small delay for UX
+      addNewStep(); // Begin the game with the first color in the sequence
+    }, 500); // Short delay before starting the game
   };
 
+  // Add a new random color to the sequence
   const addNewStep = () => {
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    setSequence((prev) => [...prev, randomColor]);
-    setPlayerInput([]); // Reset player input when a new step is added
-    playSequence([...sequence, randomColor]); // Play the entire sequence
+    const newSequence = [...sequence, randomColor]; // Add the new color to the sequence
+    setSequence(newSequence);
+    setPlayerInput([]); // Clear player input for the new round
+    playSequence(newSequence); // Play the sequence
   };
 
+  // Play the sequence of colors
   const playSequence = (sequence) => {
     let delay = 0;
     sequence.forEach((color) => {
       setTimeout(() => highlightButton(color), delay);
-      delay += 1000; // Flash each color one by one with a delay of 1 second
+      delay += 1000; // Flash each color with a 1-second delay
     });
   };
 
+  // Highlight a button
   const highlightButton = (color) => {
     const button = document.getElementById(color);
     if (button) {
@@ -65,19 +70,19 @@ export default function SimonGame() {
     }
   };
 
+  // Handle user input when a color is clicked
   const handleButtonClick = (color) => {
     if (!isPlaying || gameOver) return;
-  
+
     const newPlayerInput = [...playerInput, color];
     setPlayerInput(newPlayerInput);
-  
+
     // Check if the player's input matches the sequence so far
     if (color === sequence[newPlayerInput.length - 1]) {
       // If the player has completed the entire sequence
       if (newPlayerInput.length === sequence.length) {
         setScore((prev) => prev + 1); // Increase the score
-        setPlayerInput([]); // Reset player input for the next round
-        setTimeout(() => addNewStep(), 1000); // Add a new step
+        setTimeout(() => addNewStep(), 1000); // Add a new step after a short delay
       }
     } else {
       // If the input is incorrect, end the game
@@ -86,8 +91,8 @@ export default function SimonGame() {
       endGame();
     }
   };
-  
 
+  // End the game and save the score
   const endGame = async () => {
     setIsPlaying(false);
 
@@ -102,6 +107,11 @@ export default function SimonGame() {
         user: user.uid,
       });
     }
+  };
+
+  // Refresh the page when the "Try Again" button is clicked
+  const handleTryAgain = () => {
+    window.location.reload(); // Reload the page to restart the game
   };
 
   return (
@@ -122,25 +132,44 @@ export default function SimonGame() {
             }}
           ></div>
         ))}
-        <div className="absolute w-24 h-24 bg-white rounded-full flex items-center justify-center">
-          <p className="text-xl font-bold">Simon</p>
-        </div>
+      <div className="absolute w-24 h-24 bg-white rounded-full flex items-center justify-center border-2 border-black">
+  <p className="text-xl font-bold">Simon</p>
+</div>
+
       </div>
 
       <div className="mt-8">
-        <button
-          onClick={startGame}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          {gameOver ? 'Try Again' : 'Start Game'}
-        </button>
-      </div>
+  {!gameOver ? (
+    <button
+      onClick={startGame}
+      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      style={{ visibility: isPlaying ? 'hidden' : 'visible' }} // Ukrywa przycisk, gdy gra jest w toku
+    >
+      Rozpocznij
+    </button>
+  ) : (
+    <button
+      onClick={handleTryAgain} // Trigger page reload
+      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4"
+    >
+      Spróbuj ponownie
+    </button>
+  )}
+</div>
 
-      <div className="mt-4">
-        <p className="text-xl">Score: {score}</p>
-        <p className="text-xl">Best Score: {bestScore}</p>
-        {gameOver && <p className="text-2xl text-red-500">{message}</p>}
-      </div>
+
+
+<div className="mt-8 text-center">
+  <div className="mb-4">
+    <p className="text-2xl font-semibold text-gray-700">Wynik: <span className="text-blue-500">{score}</span></p>
+    <p className="text-2xl font-semibold text-gray-700">Najlepszy wynik: <span className="text-green-500">{bestScore}</span></p>
+  </div>
+  
+  {gameOver && (
+    <p className="text-3xl font-bold text-red-600 mt-4 animate-pulse">{message}</p>
+  )}
+</div>
+
 
       <style jsx>{`
         .green {
@@ -156,8 +185,8 @@ export default function SimonGame() {
           background-color: #007bff;
         }
         .active {
-          opacity: 0.6;
-          transition: opacity 0.3s ease-in-out;
+          opacity: 0.4;
+          transition: opacity 0.4s ease-in-out;
         }
       `}</style>
     </div>
