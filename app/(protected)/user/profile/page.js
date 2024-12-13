@@ -16,6 +16,8 @@ export default function ProfilePage() {
     street: '',
     city: '',
     zipCode: '',
+    nickname: '', // Dodane pole dla nickname
+    photoURL: '', // Dodane pole dla linku do zdjęcia
   });
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -25,24 +27,26 @@ export default function ProfilePage() {
       if (currentUser) {
         setUser(currentUser);
 
-        // Pobieranie danych adresowych z Firestore
+        // Pobieranie danych użytkownika z Firestore
         const docRef = doc(db, 'users', currentUser.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          const address = docSnap.data().address || {};
+          const userData = docSnap.data();
           setFormData({
             displayName: currentUser.displayName || '',
             photoURL: currentUser.photoURL || '',
-            street: address.street || '',
-            city: address.city || '',
-            zipCode: address.zipCode || '',
+            nickname: userData.nickname || '', // Pobieramy nickname z Firestore
+            street: userData.address?.street || '',
+            city: userData.address?.city || '',
+            zipCode: userData.address?.zipCode || '',
           });
         } else {
           // Jeśli dokument nie istnieje
           setFormData({
             displayName: currentUser.displayName || '',
             photoURL: currentUser.photoURL || '',
+            nickname: '',
             street: '',
             city: '',
             zipCode: '',
@@ -84,6 +88,8 @@ export default function ProfilePage() {
 
       // Tworzenie/aktualizacja dokumentu w kolekcji users
       await setDoc(doc(db, 'users', user?.uid), {
+        nickname: formData.nickname, // Zapisujemy nickname w Firestore
+        photoURL: formData.photoURL, // Zapisujemy link do zdjęcia w Firestore
         address: {
           city: formData.city,
           street: formData.street,
@@ -118,29 +124,16 @@ export default function ProfilePage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="displayName" className="block font-bold mb-2">
+            <label htmlFor="nickname" className="block font-bold mb-2">
               Wyświetlana nazwa
             </label>
             <input
               type="text"
-              id="displayName"
-              name="displayName"
-              value={formData.displayName}
+              id="nickname"
+              name="nickname"
+              value={formData.nickname}
               onChange={handleInputChange}
               className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block font-bold mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={user.email}
-              readOnly
-              className="border rounded w-full py-2 px-3 text-gray-700 bg-gray-200 cursor-not-allowed"
             />
           </div>
 
@@ -158,7 +151,6 @@ export default function ProfilePage() {
             />
           </div>
 
-          {/* Dodane pola adresowe */}
           <div>
             <label htmlFor="street" className="block font-bold mb-2">
               Ulica
@@ -201,24 +193,19 @@ export default function ProfilePage() {
             />
           </div>
 
-
-
-      {/* Dodanie statusu weryfikacji e-maila */}
-      {user && (
-        <div className="mb-4">
-          <p className="font-semibold">
-            Status weryfikacji e-maila:{" "}
-            {user.emailVerified ? (
-              <span className="text-green-500">Zweryfikowany</span>
-            ) : (
-              <span className="text-red-500">Niezweryfikowany</span>
-            )}
-          </p>
-        </div>
-      )}
-
-
-
+          {/* Dodanie statusu weryfikacji e-maila */}
+          {user && (
+            <div className="mb-4">
+              <p className="font-semibold">
+                Status weryfikacji e-maila:{" "}
+                {user.emailVerified ? (
+                  <span className="text-green-500">Zweryfikowany</span>
+                ) : (
+                  <span className="text-red-500">Niezweryfikowany</span>
+                )}
+              </p>
+            </div>
+          )}
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
