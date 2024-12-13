@@ -46,7 +46,7 @@ export default function SimonGame() {
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
     setSequence((prev) => [...prev, randomColor]);
     setPlayerInput([]); // Reset player input when a new step is added
-    playSequence([randomColor]); // Play the new color in the sequence
+    playSequence([...sequence, randomColor]); // Play the entire sequence
   };
 
   const playSequence = (sequence) => {
@@ -67,25 +67,26 @@ export default function SimonGame() {
 
   const handleButtonClick = (color) => {
     if (!isPlaying || gameOver) return;
-
+  
     const newPlayerInput = [...playerInput, color];
     setPlayerInput(newPlayerInput);
-
-    // If the clicked color is the correct one
-    if (color === sequence[playerInput.length - 1]) {
-      // If the player has finished the whole sequence correctly
+  
+    // Check if the player's input matches the sequence so far
+    if (color === sequence[newPlayerInput.length - 1]) {
+      // If the player has completed the entire sequence
       if (newPlayerInput.length === sequence.length) {
-        setScore((prev) => prev + 1); // Increase score
-        setPlayerInput([]); // Reset player input
-        setTimeout(() => addNewStep(), 1000); // Add new step after a short delay
+        setScore((prev) => prev + 1); // Increase the score
+        setPlayerInput([]); // Reset player input for the next round
+        setTimeout(() => addNewStep(), 1000); // Add a new step
       }
     } else {
-      // Incorrect input, end game
+      // If the input is incorrect, end the game
       setGameOver(true);
       setMessage("Game Over!"); // Show game over message
       endGame();
     }
   };
+  
 
   const endGame = async () => {
     setIsPlaying(false);
@@ -105,7 +106,7 @@ export default function SimonGame() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-4xl font-bold mb-8">Simon Game</h1>
+      <h1 className="text-4xl font-bold mb-8">Gra Simon</h1>
       <div className="relative w-96 h-96 rounded-full border-4 border-black flex items-center justify-center">
         {colors.map((color, index) => (
           <div
@@ -114,9 +115,9 @@ export default function SimonGame() {
             onClick={() => handleButtonClick(color)}
             className={`absolute w-full h-full cursor-pointer transition-all ${color} rounded-full`}
             style={{
-              clipPath: `polygon(50% 50%, 0% 0%, 50% 0%, 50% 50%)`,
+              clipPath: `polygon(50% 50%, 100% 50%, 100% 0%, 50% 0%)`,
               backgroundColor: color,
-              transform: `rotate(${index * 90}deg)`,
+              transform: `rotate(${index * 90}deg) translate(0%, 0%)`,
               transformOrigin: 'center',
             }}
           ></div>
@@ -141,7 +142,6 @@ export default function SimonGame() {
         {gameOver && <p className="text-2xl text-red-500">{message}</p>}
       </div>
 
-      {/* Inline CSS styles for the active flashing effect */}
       <style jsx>{`
         .green {
           background-color: #28a745;
