@@ -74,37 +74,37 @@ export default function RootLayout({ children }) {
             {/* Pasek boczny (widoczny na desktopie, ukryty na mobilkach) */}
             <aside className="bg-gray-200 w-60 p-4 lg:block hidden">
               <nav className="flex flex-col space-y-4">
-                <Navbar /> {/* Wywołanie komponentu Navbar */}
+                <Navbar closeMenu={closeMenu} /> {/* Wywołanie komponentu Navbar */}
               </nav>
             </aside>
 
             {/* Główne menu na urządzeniach mobilnych */}
             <aside
               id="mobileMenu"
-              className={`lg:hidden fixed top-0 left-0 w-full bg-blue-600 p-4 z-50 ${
-                menuOpen ? 'block' : 'hidden'
-              }`} // Dynamically toggle visibility of the menu
+              className={`lg:hidden fixed top-0 left-0 w-full bg-blue-600 p-4 z-50 ${menuOpen ? 'block' : 'hidden'}`}
             >
-              {/* Przycisk zamykania menu */}
-              <button
-                className="text-white mb-4"
-                onClick={closeMenu}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-6 h-6"
+              {/* Przycisk zamykania menu (po prawej stronie) */}
+              <div className="flex justify-end">
+                <button
+                  className="text-white mb-4"
+                  onClick={closeMenu}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
 
               {/* Menu rozwijane */}
               <nav className="flex flex-col space-y-4">

@@ -110,7 +110,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center h-full">
+    <div className="flex flex-col justify-center items-center h-full p-4 md:p-0">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full max-w-md">
         {formData.photoURL && (
           <div className="flex justify-center mb-6">
@@ -209,7 +209,7 @@ export default function ProfilePage() {
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col space-y-3 mt-4">
             <button
               type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
