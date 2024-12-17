@@ -25,15 +25,9 @@ export default function LeaderboardPage() {
           ...doc.data(), // Zakładamy, że BestGamePoints jest w danych dokumentu
         }));
 
-        // Zalogujmy pobrane wyniki, aby sprawdzić strukturę danych
-        console.log("Pobrane wyniki scores:", scoresList);
-
         // Pobieranie danych użytkowników z kolekcji users
         const userUIDs = scoresList.map((score) => score.user);
         const uniqueUserUIDs = [...new Set(userUIDs)]; // Usunięcie duplikatów UID
-
-        // Zalogujmy UID użytkowników
-        console.log("UID użytkowników:", uniqueUserUIDs);
 
         const usersData = {};
         for (const uid of uniqueUserUIDs) {
@@ -41,8 +35,6 @@ export default function LeaderboardPage() {
           const userDocSnap = await getDoc(userDocRef);
           
           if (userDocSnap.exists()) {
-            // Zalogujmy dane użytkownika
-            console.log(`Dane użytkownika ${uid}:`, userDocSnap.data());
             usersData[uid] = userDocSnap.data();
           } else {
             usersData[uid] = {}; // Jeśli brak użytkownika, twórz pusty obiekt
@@ -107,7 +99,7 @@ export default function LeaderboardPage() {
                         className="w-10 h-10 rounded-full border-2 border-gray-300"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full border-2 border-gray-300 bg-gray-200" /> // Puste zdjęcie
+                      <div className="w-10 h-10 rounded-full border-2 border-gray-300 bg-gray-200" />
                     )}
                   </td>
                   <td className="py-3 px-6 border-b">{user.nickname || ''}</td>

@@ -117,6 +117,7 @@ export default function SimonGame() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-4xl font-bold mb-8">Gra Simon</h1>
+      
       <div className="relative w-96 h-96 rounded-full border-4 border-black flex items-center justify-center">
         {colors.map((color, index) => (
           <div

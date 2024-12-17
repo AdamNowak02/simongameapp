@@ -17,7 +17,6 @@ export default function ProfilePage() {
     city: '',
     zipCode: '',
     nickname: '', // Dodane pole dla nickname
-    photoURL: '', // Dodane pole dla linku do zdjęcia
   });
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -35,7 +34,7 @@ export default function ProfilePage() {
           const userData = docSnap.data();
           setFormData({
             displayName: currentUser.displayName || '',
-            photoURL: currentUser.photoURL || '',
+            photoURL: currentUser.photoURL || '', // Używamy photoURL z Firebase
             nickname: userData.nickname || '', // Pobieramy nickname z Firestore
             street: userData.address?.street || '',
             city: userData.address?.city || '',
@@ -114,7 +113,7 @@ export default function ProfilePage() {
         {user?.photoURL && (
           <div className="flex justify-center mb-6">
             <img
-              src={user.photoURL}
+              src={user.photoURL} // Załadowanie zdjęcia z photoURL użytkownika
               alt="User Profile"
               className="w-24 h-24 rounded-full border-2 border-gray-300"
             />
@@ -193,11 +192,10 @@ export default function ProfilePage() {
             />
           </div>
 
-          {/* Dodanie statusu weryfikacji e-maila */}
           {user && (
             <div className="mb-4">
               <p className="font-semibold">
-                Status weryfikacji e-maila:{" "}
+                Status weryfikacji e-maila:{' '}
                 {user.emailVerified ? (
                   <span className="text-green-500">Zweryfikowany</span>
                 ) : (
