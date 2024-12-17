@@ -7,12 +7,14 @@ import { db } from '../../../lib/firebase'; // Import Firestore
 import { setDoc, doc, getDoc } from 'firebase/firestore'; // Funkcje Firestore
 import { useRouter } from 'next/navigation'; // Funkcja do nawigacji w Next.js
 
+const DEFAULT_PROFILE_PICTURE = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     displayName: '',
-    photoURL: '',
+    photoURL: DEFAULT_PROFILE_PICTURE, // Domyślne zdjęcie profilowe
     street: '',
     city: '',
     zipCode: '',
@@ -34,7 +36,7 @@ export default function ProfilePage() {
           const userData = docSnap.data();
           setFormData({
             displayName: currentUser.displayName || '',
-            photoURL: currentUser.photoURL || '', // Używamy photoURL z Firebase
+            photoURL: currentUser.photoURL || DEFAULT_PROFILE_PICTURE, // Ustawiamy domyślne zdjęcie
             nickname: userData.nickname || '', // Pobieramy nickname z Firestore
             street: userData.address?.street || '',
             city: userData.address?.city || '',
@@ -44,7 +46,7 @@ export default function ProfilePage() {
           // Jeśli dokument nie istnieje
           setFormData({
             displayName: currentUser.displayName || '',
-            photoURL: currentUser.photoURL || '',
+            photoURL: currentUser.photoURL || DEFAULT_PROFILE_PICTURE, // Domyślne zdjęcie profilowe
             nickname: '',
             street: '',
             city: '',
@@ -82,13 +84,13 @@ export default function ProfilePage() {
       // Aktualizacja profilu użytkownika w Authentication
       await updateProfile(user, {
         displayName: formData.displayName,
-        photoURL: formData.photoURL,
+        photoURL: formData.photoURL || DEFAULT_PROFILE_PICTURE, // Ustawiamy domyślny obrazek, jeśli pusty
       });
 
       // Tworzenie/aktualizacja dokumentu w kolekcji users
       await setDoc(doc(db, 'users', user?.uid), {
         nickname: formData.nickname, // Zapisujemy nickname w Firestore
-        photoURL: formData.photoURL, // Zapisujemy link do zdjęcia w Firestore
+        photoURL: formData.photoURL || DEFAULT_PROFILE_PICTURE, // Domyślne zdjęcie w Firestore
         address: {
           city: formData.city,
           street: formData.street,
@@ -110,10 +112,10 @@ export default function ProfilePage() {
   return (
     <div className="flex flex-col justify-center items-center h-full">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full max-w-md">
-        {user?.photoURL && (
+        {formData.photoURL && (
           <div className="flex justify-center mb-6">
             <img
-              src={user.photoURL} // Załadowanie zdjęcia z photoURL użytkownika
+              src={formData.photoURL} // Załadowanie zdjęcia z photoURL użytkownika lub domyślnego
               alt="User Profile"
               className="w-24 h-24 rounded-full border-2 border-gray-300"
             />
@@ -138,7 +140,7 @@ export default function ProfilePage() {
 
           <div>
             <label htmlFor="photoURL" className="block font-bold mb-2">
-              Link do zdjęcia
+              Link do zdjęcia (ustaw własne)
             </label>
             <input
               type="text"

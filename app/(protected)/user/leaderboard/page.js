@@ -77,20 +77,20 @@ export default function LeaderboardPage() {
           <tbody>
             {scores.map((score, index) => {
               const user = users[score.user] || {}; // Jeśli brak użytkownika, dajemy pusty obiekt
-              let rowClass = ''; // Klasa dla tła wiersza
 
-              // Kolory dla miejsc 1, 2, 3
+              // Klasa dla numeru miejsca (1, 2, 3)
+              let placeClass = '';
               if (index === 0) {
-                rowClass = 'bg-yellow-500'; // Złote tło dla 1 miejsca
+                placeClass = 'text-yellow-500 font-bold'; // Złoty kolor dla 1 miejsca
               } else if (index === 1) {
-                rowClass = 'bg-gray-400'; // Srebrne tło dla 2 miejsca
+                placeClass = 'text-gray-400 font-bold'; // Srebrny kolor dla 2 miejsca
               } else if (index === 2) {
-                rowClass = 'bg-orange-800'; // Brązowe tło dla 3 miejsca
+                placeClass = 'text-orange-800 font-bold'; // Brązowy kolor dla 3 miejsca
               }
 
               return (
-                <tr key={score.id} className={`${rowClass} hover:bg-gray-100`}>
-                  <td className="py-3 px-6 border-b">{index + 1}</td>
+                <tr key={score.id} className="hover:bg-gray-100">
+                  <td className={`py-3 px-6 border-b ${placeClass}`}>{index + 1}</td>
                   <td className="py-3 px-6 border-b">
                     {user.photoURL ? (
                       <img
